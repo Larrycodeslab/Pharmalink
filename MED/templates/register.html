@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PharmaLink | Register</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f4f8; display: flex; justify-content: center; padding: 40px; }
+        .reg-card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); width: 450px; border-top: 8px solid #1976d2; }
+        h2 { color: #1976d2; text-align: center; }
+        label { font-weight: bold; display: block; margin-top: 15px; color: #555; }
+        input, textarea { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+        button { width: 100%; padding: 14px; background: #1976d2; color: white; border: none; border-radius: 6px; margin-top: 20px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #1565c0; }
+    </style>
+</head>
+<body>
+    <div class="reg-card">
+        <h2>Patient Registration</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <label>Full Name</label>
+            <input type="text" name="full_name" placeholder="John Doe" required>
+            
+            <label>Email Address</label>
+            <input type="email" name="email" placeholder="john@example.com" required>
+            
+            <label>Phone Number</label>
+            <input type="text" name="phone" placeholder="+256..." required>
+            
+            <label>Date of Birth</label>
+            <input type="date" name="dob" required>
+            
+            <label>Home Address</label>
+            <textarea name="address" rows="3" required></textarea>
+            
+            <button type="submit">CREATE ACCOUNT</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto p-6">
+    <div class="mb-6">
+        <a href="{% url 'order_list' %}" class="text-blue-600 hover:underline text-sm font-medium">
+            ← Back to Dashboard
+        </a>
+    </div>
+
+    <div class="bg-white shadow-lg rounded-xl border border-slate-200 overflow-hidden">
+        
+        <div class="p-6 border-b border-slate-200 bg-slate-50">
+            <h2 class="text-xl font-bold text-slate-800">Tracking Order #{{ order.id }}</h2>
+            <p class="text-slate-600">{{ order.patient_name }} — {{ order.medicines }}</p>
+        </div>
+
+        <div class="p-6">
+            <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+            <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+            <div id="map" class="rounded-lg border border-slate-300 shadow-inner" style="height: 400px; width: 100%;"></div>
+
+            <div id="status-container" class="mt-6 p-4 bg-blue-50 rounded-lg flex items-center justify-between transition-colors">
+                <div>
+                    <p id="status-text" class="font-bold text-blue-800 text-sm uppercase">GPS Tracking: Inactive</p>
+                    <p class="text-xs text-blue-600">Click to share your live location with the pharmacy.</p>
+                </div>
+                <button onclick="startTracking()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-bold shadow-md transition">
+                    Start Delivery
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 1. Setup the Map with Safety Defaults
+    var startLat = parseFloat("{{ order.latitude|default:0 }}");
+    var startLng = parseFloat("{{ order.longitude|default:0 }}");
+
+    var map = L.map('map').setView([startLat, startLng], 13);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    var marker = L.marker([startLat, startLng]).addTo(map)
+        .bindPopup('Current Rider Position')
+        .openPopup();
+
+    // 2. The Tracking Function
+    function startTracking() {
+        if (navigator.geolocation) {
+            // watchPosition sends updates whenever the rider moves
+            navigator.geolocation.watchPosition(sendLocation, handleError, { 
+                enableHighAccuracy: true 
+            });
+            
+            // UI Update
+            document.getElementById('status-text').innerText = "GPS Tracking: LIVE";
+            document.getElementById('status-container').className = "mt-6 p-4 bg-green-50 rounded-lg flex items-center justify-between transition-colors";
+            document.getElementById('status-text').className = "font-bold text-green-800 text-sm uppercase";
+        } else {
+            alert("Your browser does not support GPS tracking.");
+        }
+    }
+
+    // 3. Send Data to Django
+    function sendLocation(position) {
+        var lat = position.coords.latitude;
+        var lng = position.coords.longitude;
+
+        // Move marker on rider's screen
+        marker.setLatLng([lat, lng]);
+        map.panTo([lat, lng]);
+
+        // POST the data to your update-location view
+        fetch('/update-location/{{ order.id }}/', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'X-CSRFToken': "{{ csrf_token }}" 
+            },
+            body: JSON.stringify({ lat: lat, lng: lng })
+        })
+        .then(response => {
+            if (!response.ok) console.error("Database update failed.");
+        });
+    }
+
+    function handleError(err) {
+        console.warn('GPS Error (' + err.code + '): ' + err.message);
+    }
+</script>
+{% endblock %}

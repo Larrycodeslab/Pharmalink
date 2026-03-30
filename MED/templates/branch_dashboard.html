@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard - {{ branch.name }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: sans-serif; background: #f4f7f6; padding: 20px; }
+        .stats-container { display: flex; gap: 20px; flex-wrap: wrap; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); min-width: 200px; }
+        h2 { color: #333; }
+        .sales-amt { font-size: 32px; color: #28a745; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Dashboard: {{ branch.name }}</h1>
+    <p>Date: {% now "F j, Y" %}</p>
+
+    <div class="stats-container">
+        <div class="card">
+            <h3>Today's Revenue</h3>
+            <p class="sales-amt">UGX {{ total_sales }}</p>
+            <p>{{ order_count }} successful sales today</p>
+        </div>
+
+        <div class="card">
+            <h3>Active Workers</h3>
+            <ul>
+                {% for worker in workers %}
+                    <li>{{ worker.user.username }}</li>
+                {% empty %}
+                    <li>No staff assigned.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

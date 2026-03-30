@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 40px auto; padding: 20px; font-family: sans-serif;">
+    <div style="background: rgb(141, 153, 160); padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #f1f5f9;">
+        <h1 style="color: #1e293b; font-size: 24px; font-weight: 800; margin-bottom: 8px;">Order Your Medicine</h1>
+        <p style="color: #64748b; margin-bottom: 30px;">Fill in the details below to request your prescription.</p>
+
+        <div style="min-height: 100vh; background: #0f172a; padding: 20px; font-family: sans-serif;">
+        <div style="max-width: 500px; margin: 20px auto; background: #1e293b; padding: 30px; border-radius: 24px; border: 1px solid #334155; box-shadow: 0 20px 50px rgba(0,0,0,0.3);">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-weight: 700; color: #334155; margin-bottom: 8px;">Full Name</label>
+                <input type="text" name="name" required placeholder="Enter your name" 
+                       style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 10px;">
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-weight: 700; color: #334155; margin-bottom: 8px;">Phone Number</label>
+                <input type="text" name="phone" required placeholder="07XX XXX XXX" 
+                       style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 10px;">
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-weight: 700; color: #334155; margin-bottom: 8px;">Select Pharmacy Branch</label>
+                <select name="branch" required style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 10px; background: white;">
+                    <option value="" disabled selected>Choose a branch...</option>
+                    {% for branch in branches %}
+                        <option value="{{ branch.name }}">{{ branch.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-weight: 700; color: #334155; margin-bottom: 8px;">Medicines Needed</label>
+                <textarea name="meds" required placeholder="List your medicines here..." rows="3" 
+                          style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 10px;"></textarea>
+            </div>
+
+            <div style="margin-bottom: 30px; background: #0a0c0e; padding: 15px; border-radius: 12px; border: 2px dashed #e2e8f0;">
+                <label style="display: block; font-weight: 700; color: #334155; margin-bottom: 8px;">Upload Prescription Photo</label>
+                <input type="file" name="prescription" accept="image/*" required>
+            </div>
+
+            <button type="submit" style="width: 100%; padding: 16px; background: #2563eb; color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.2s;">
+                Place Order Now
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
