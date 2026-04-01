@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Pharmacy
 
 # Create your views here.
-def recipes(request):
+def pharmacy(request):
     if request.method == 'POST':
         data = request.POST
       
